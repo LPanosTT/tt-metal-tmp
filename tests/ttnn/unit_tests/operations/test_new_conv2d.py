@@ -2131,3 +2131,30 @@ def test_conv_for_vanilla_unet(
         output_layout=output_layout,
         has_bias=False,
     )
+
+
+@pytest.mark.parametrize("device_params", [{"l1_small_size": 2**15}], indirect=True)
+def test_lewis(device):
+    breakpoint()
+    conv_weight_shape = (32, 3, 3, 3)
+    torch_weight_tensor = torch.randn(conv_weight_shape, dtype=torch.bfloat16).float()
+
+    tt_weight_tensor = ttnn.from_torch(
+        torch_weight_tensor, ttnn.float32
+    )
+
+    tt_weight_tensor = ttnn.prepare_conv_weights_channels_last_for_ttnn(
+        tt_weight_tensor, 
+        3,
+        32,
+        128,
+        128,
+        (3, 3),
+        (1, 1),
+        (1, 1),
+        (1, 1),
+        1,
+        device)
+
+
+    x = 2
